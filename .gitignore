@@ -1,0 +1,63 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Logs and generated results (keep the folder itself)
+*.log
+logs/
+results/*
+!results/.gitkeep
+
+# Real survey data: respondents are anonymous, but raw exports stay local
+data/raw/
+data/processed/
+!data/sample/
+*.xlsx
+*.xls
+*.sav
+
+# Binary data and model weights
+*.pkl
+*.pickle
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.npy
+*.npz
+*.parquet
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials*.json
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+*.swp
