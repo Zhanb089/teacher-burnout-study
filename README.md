@@ -5,7 +5,7 @@
 ![Status](https://img.shields.io/badge/status-pipeline%20skeleton-orange.svg)
 
 **Authors:** Zhanat, Yergali
-**Repository:** https://github.com/Zhanb089/teacher-burnout-schools
+**Repository:** https://github.com/Zhanb089/teacher-burnout-study
 
 ## Overview
 
@@ -32,7 +32,7 @@ scale and at least 15 complete questionnaires per group.
 ## Repository structure
 
 ```
-teacher-burnout-schools/
+teacher-burnout-study/
 ├── README.md
 ├── LICENSE
 ├── Dockerfile               # pinned base image, runs the pipeline
@@ -56,7 +56,7 @@ teacher-burnout-schools/
 
 ## Quickstart
 
-Get the code once (`git clone https://github.com/Zhanb089/teacher-burnout-schools.git`, then open the
+Get the code once (`git clone https://github.com/Zhanb089/teacher-burnout-study.git`, then open the
 folder). After that, two commands (they work the same in Linux, macOS, Windows PowerShell and cmd):
 
 ```bash
@@ -124,7 +124,7 @@ not committed (see `.gitignore`).
   title  = {Professional Burnout of Teachers in Private and State Schools},
   author = {Zhanat and Yergali},
   year   = {2026},
-  url    = {https://github.com/Zhanb089/teacher-burnout-schools}
+  url    = {https://github.com/Zhanb089/teacher-burnout-study}
 }
 ```
 
