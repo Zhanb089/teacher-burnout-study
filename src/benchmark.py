@@ -309,11 +309,19 @@ def _ram_bytes():
     return None
 
 
-def _git_state():
+def _git_state(ignore_path=None):
+    """Commit hash and whether the working tree has uncommitted changes.
+
+    The measurement log itself is tracked in git, so it is excluded from the check:
+    otherwise the previous run's log would make every new run look "dirty".
+    """
+    status_cmd = ["git", "status", "--porcelain"]
+    if ignore_path:
+        status_cmd += ["--", ".", f":(exclude){Path(ignore_path).as_posix()}"]
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
                                 text=True, timeout=5, check=True).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True,
+        dirty = bool(subprocess.run(status_cmd, capture_output=True,
                                     text=True, timeout=5, check=True).stdout.strip())
         return commit, dirty
     except (OSError, subprocess.SubprocessError):
@@ -321,7 +329,7 @@ def _git_state():
 
 
 def collect_metadata(config_path, cfg, run_id):
-    commit, dirty = _git_state()
+    commit, dirty = _git_state(cfg["benchmark"]["output"])
     try:
         affinity = len(os.sched_getaffinity(0))
     except AttributeError:
