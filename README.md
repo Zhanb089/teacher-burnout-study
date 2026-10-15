@@ -39,9 +39,11 @@ teacher-burnout-study/
 ├── requirements.txt         # exact dependency versions
 ├── config.yaml              # all experiment parameters
 ├── data/
-│   └── sample/              # 8 fictional rows to test the pipeline
+│   ├── sample/              # 8 fictional rows to test the pipeline
+│   └── raw/
+│       └── test_run.jsonl   # first measurement log: 10 warm-up + 120 timed runs (fictional data)
 ├── src/
-│   └── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis
+│   └── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis + measurement harness (--bench)
 ├── notebooks/               # exploratory notebooks (empty for now)
 ├── docs/
 │   └── methodology_card.md  # methodology passport card
@@ -85,6 +87,41 @@ python src/benchmark.py --config config.yaml
 
 To analyse real data, set `paths.data` in `config.yaml` to your CSV (same columns as the sample).
 
+## Measurement run (`--bench`)
+
+Besides the analysis itself, the script can measure how long the analysis takes, as a clean experiment:
+
+```bash
+python src/benchmark.py --config config.yaml --bench
+# Docker, saving the log to your computer (Linux / macOS; in PowerShell use ${PWD})
+docker run --rm --cpus=2 --memory=2g -v "$(pwd)/data/raw:/app/data/raw" burnout-analysis \
+    python src/benchmark.py --config config.yaml --bench
+```
+
+What happens:
+
+1. Fictional respondents are generated first (`synthetic` section of `config.yaml`), for 35, 100 and 1000
+   people, so the load is not only our planned survey size.
+2. 10 warm-up runs are executed and logged with `"phase": "warmup"`. They are never used in the statistics.
+3. 120 timed runs follow (`"phase": "measure"`). The stopwatch (`time.perf_counter_ns`) surrounds only
+   `analyze()`. Generation, copying, printing and file writing are outside it, and the log is written
+   only after the series is finished.
+4. `data/raw/test_run.jsonl` gets one JSON line per run (microsecond timestamp, duration, status, error),
+   a first line with the environment (Python and library versions, CPU, RAM, git commit, config hash, seed)
+   and a last line with median, p95, p99 and the error rate. Failed runs are counted in the error rate,
+   not dropped.
+
+5. After the timed runs, six broken datasets are run 5 times each as phase `edge`: empty answers, answers
+   outside 0-6, only one school type, tiny groups, duplicated respondents and "straight-lining" (the same
+   answer everywhere). They are reported separately and never mixed into the main statistics. The analysis
+   rejects the first three and the duplicates with a clear error (logged as `status: error`); tiny groups
+   and straight-lining are processed and show up as a failed guardrail.
+
+All parameters (number of runs, warm-up size, workload sizes, distributions, edge cases) are in `config.yaml`.
+Inside Docker there is no git, so pass the commit yourself: `-e GIT_COMMIT=$(git rev-parse --short HEAD)`.
+The committed `test_run.jsonl` contains only fictional data. Real survey exports in `data/raw/` stay
+ignored by git.
+
 ## Planned analyses
 
 | Question | Method | Reported metrics |
@@ -107,7 +144,8 @@ the pipeline runs; the group-size guardrail correctly reports FAIL):
 
 - [x] Exact dependency versions (`requirements.txt`, pinned base image)
 - [x] Fixed random seed in `config.yaml`
-- [x] All parameters in `config.yaml`, none hard-coded
+- [x] All analysis and load parameters in `config.yaml`
+- [x] Measurement log with warm-up runs separated from timed runs (`data/raw/test_run.jsonl`)
 - [x] Sample data to test the pipeline
 - [x] One command to build and one to run
 - [ ] Real survey data analysed (planned for Week 7)

@@ -1,23 +1,18 @@
-# Experiment configuration. All parameters of the analysis live here.
 seed: 42
 
 paths:
-  data: data/sample/sample_responses.csv   # replace with the real survey export in Week 7
+  data: data/sample/sample_responses.csv
   output_dir: results
 
-# Independent variable "school type" is coded in the data column `school_type`
 groups:
   state: 0
   private: 1
 
-# Item numbers of the burnout questionnaire (MBI, Vodopyanova & Starchenkova adaptation).
-# Columns in the CSV are q1..q22. Scale scores are plain sums of the listed items.
 scale_keys:
-  EE:  [1, 2, 3, 6, 8, 13, 14, 16, 20]      # emotional exhaustion, 0-54 (primary metric)
-  DP:  [5, 10, 11, 15, 22]                  # depersonalization, 0-30
-  RPA: [4, 7, 9, 12, 17, 18, 19, 21]        # reduced professional accomplishment, 0-48
+  EE:  [1, 2, 3, 6, 8, 13, 14, 16, 20]
+  DP:  [5, 10, 11, 15, 22]
+  RPA: [4, 7, 9, 12, 17, 18, 19, 21]
 
-# Independent variables describing working conditions (RQ2)
 work_factors:
   - hours_week
   - class_size
@@ -26,14 +21,47 @@ work_factors:
   - parent_pressure
   - stability
 
-# RQ3 (exploratory): factor and burnout component for each hypothesis
 rq3_hypotheses:
   H3a: [class_size, EE]
   H3b: [report_hours, EE]
   H3c: [parent_pressure, DP]
   H3d: [stability, EE]
 
-# Guardrail metrics
 guardrails:
   min_group_size: 15
   min_alpha: 0.7
+
+questionnaire:
+  item_min: 0
+  item_max: 6
+
+benchmark:
+  output: data/raw/test_run.jsonl
+  warmup_runs: 10
+  measured_runs: 120
+  workload_sizes: [35, 100, 1000]
+  disable_gc: true
+  edge_repeats: 5
+  edge_cases:
+    - missing_values
+    - out_of_range
+    - single_group
+    - tiny_groups
+    - duplicates
+    - straight_lining
+
+synthetic:
+  state_shift: 0.5
+  loading: 0.8
+  item_noise_sd: 1.0
+  hours_week: {mean: 48, sd: 6, min: 20, max: 80}
+  class_size: {state_mean: 30, private_mean: 20, sd: 5, min: 8, max: 45}
+  report_hours: {pareto_shape: 3.0, scale: 4, min: 1, max: 40}
+  rating: {mean: 3.0, sd: 0.8, min: 1, max: 5}
+  tenure_years: {gamma_shape: 2.0, gamma_scale: 6.0, max: 40}
+  edge_missing_share: 0.10
+  edge_out_of_range_share: 0.05
+  edge_out_of_range_value: 9
+  edge_tiny_size: 6
+  edge_duplicate_rows: 10
+  edge_straight_value: 3
