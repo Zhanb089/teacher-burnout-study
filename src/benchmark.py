@@ -264,6 +264,14 @@ def make_edge_case(name, cfg, seed):
 
 
 def _cpu_model():
+    if sys.platform == "win32":
+        try:
+            import winreg
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                                r"HARDWARE\DESCRIPTION\System\CentralProcessor\0") as key:
+                return winreg.QueryValueEx(key, "ProcessorNameString")[0].strip()
+        except OSError:
+            pass
     try:
         for line in Path("/proc/cpuinfo").read_text().splitlines():
             if line.lower().startswith("model name"):
@@ -274,6 +282,24 @@ def _cpu_model():
 
 
 def _ram_bytes():
+    if sys.platform == "win32":
+        try:
+            import ctypes
+
+            class MemoryStatus(ctypes.Structure):
+                _fields_ = [("length", ctypes.c_ulong), ("load", ctypes.c_ulong),
+                            ("total_phys", ctypes.c_ulonglong), ("avail_phys", ctypes.c_ulonglong),
+                            ("total_page", ctypes.c_ulonglong), ("avail_page", ctypes.c_ulonglong),
+                            ("total_virtual", ctypes.c_ulonglong), ("avail_virtual", ctypes.c_ulonglong),
+                            ("avail_ext", ctypes.c_ulonglong)]
+
+            status = MemoryStatus()
+            status.length = ctypes.sizeof(MemoryStatus)
+            if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+                return int(status.total_phys)
+        except (AttributeError, OSError):
+            pass
+        return None
     try:
         for line in Path("/proc/meminfo").read_text().splitlines():
             if line.startswith("MemTotal"):
