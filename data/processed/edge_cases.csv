@@ -1,0 +1,7 @@
+edge_case,runs,errors,outcome,median_duration_us,first_error
+missing_values,5,5,rejected,1853.0,ValueError('76 empty item answers: exclude incomplete questionnaires first')
+out_of_range,5,5,rejected,1237.0,ValueError('42 item answers outside 0-6')
+single_group,5,5,rejected,5869.0,ValueError('`x` and `y` must be of nonzero size.')
+tiny_groups,5,0,processed,40753.0,
+duplicates,5,5,rejected,1317.0,ValueError('10 duplicated respondent ids')
+straight_lining,5,0,processed,15907.0,
