@@ -221,7 +221,9 @@ def save_figure(fig: plt.Figure, name: str, out_dir: Path) -> list[Path]:
     """Vector PDF for the paper/LaTeX and 300 DPI PNG for web/GitHub."""
     out_dir.mkdir(parents=True, exist_ok=True)
     paths = [out_dir / f"{name}.pdf", out_dir / f"{name}.png"]
-    fig.savefig(paths[0])
+    # CreationDate=None keeps the PDF byte-identical between runs (no timestamp inside),
+    # so re-running the script does not show up as a change in git.
+    fig.savefig(paths[0], metadata={"CreationDate": None})
     fig.savefig(paths[1], dpi=300)
     plt.close(fig)
     return paths
