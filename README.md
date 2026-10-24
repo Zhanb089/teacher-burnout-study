@@ -19,8 +19,9 @@ conditions explain the difference?
 
 | | H0 | H1 |
 |---|---|---|
-| RQ1 | Burnout does not differ between school types | State-school teachers have higher burnout |
-| RQ2 | Working conditions are unrelated to burnout | Higher demands and lower resources go with higher burnout |
+| RQ1 | Burnout does not differ between school types | Burnout levels differ between state and private school teachers (main comparison: emotional exhaustion) |
+| RQ2a | No working condition is related to emotional exhaustion | At least one working condition is related to emotional exhaustion |
+| RQ2b | The difference between school types does not become smaller when working conditions are controlled | The difference between school types becomes smaller when working conditions are controlled |
 | RQ3 (exploratory) | The strength of each relation does not depend on school type | Class size and reporting matter more in state schools; parental pressure and job insecurity matter more in private schools |
 
 The full methodology (variables, metrics, baseline, validity threats) is in
