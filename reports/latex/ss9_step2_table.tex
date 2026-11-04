@@ -1,0 +1,39 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=1.5cm,landscape]{geometry}
+\usepackage{amsmath,amssymb,booktabs,array}
+\begin{document}
+% Copy of the speed-up equation from Step 1, so that Eq.~\ref{eq:speedup} resolves in this test file.
+\begin{equation}
+S(n)=\frac{\tilde\theta_{n}}{\tilde\theta_{n_0}},\quad n_0=35
+\label{eq:speedup}
+\end{equation}
+\begin{table}[t]
+\centering
+\caption{Latency and throughput of the analysis script (\texttt{analyze()}) by workload size $n$.
+Each workload row summarises $R_n=40$ successful measured runs; the pooled row summarises all 120.
+Ten warm-up runs are excluded; the error rate was 0\,\% in all runs.
+Latency is reported as median (p25--p75); p95 and p99 are given with their 95\,\% percentile-bootstrap
+confidence interval ($B=10\,000$ resamples, seed 42). Throughput is the median (p25--p75) number of
+respondents processed per second, and $S(n)$ is the median throughput relative to the baseline
+$n_0=35$ (Eq.~\ref{eq:speedup}). \textbf{Bold}: lowest (best) point estimate in a latency column;
+\textit{italic}: second lowest. The workloads are conditions, not competing methods. The 95\,\% intervals of the
+median latency overlap for $n=35$ and $n=100$, so their order is not meaningful; $n=1000$ is about
+3\,ms slower and its interval does not overlap theirs.}
+\label{tab:results}
+\small
+\begin{tabular}{@{}lcccrc@{}}
+\toprule
+ & \multicolumn{3}{c}{Latency (ms)} & \multicolumn{1}{c}{Throughput} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-5}
+$n$ & median (p25--p75) & p95 [95\,\% CI] & p99 [95\,\% CI] & resp./s, median (p25--p75) & $S(n)$ \\
+\midrule
+35 (baseline) & \textit{43.9} (42.2--46.2) & \textit{53.8} [47.1, 69.3] & \textit{64.1} [51.1, 69.3] & 797 (758--830) & 1.00 \\
+100 & \textbf{43.8} (41.9--45.9) & \textbf{53.3} [48.0, 62.6] & \textbf{59.0} [51.1, 62.6] & 2\,283 (2\,177--2\,384) & 2.86 \\
+1000 & 46.8 (45.6--50.4) & 55.3 [51.5, 89.7] & 82.1 [53.0, 89.7] & 21\,371 (19\,850--21\,923) & 26.8 \\
+\midrule
+All (pooled) & 45.1 (43.2--47.4) & 53.8 [51.9, 69.3] & 70.0 [54.4, 89.7] & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

@@ -1,0 +1,80 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,array}
+\begin{document}
+
+\section*{Notation}
+\begin{table}[h]
+\centering
+\caption{Notation used in the analysis of the measurement log.}
+\label{tab:notation}
+\begin{tabular}{@{}llp{7.2cm}l@{}}
+\toprule
+Symbol & Type & Meaning & Unit \\
+\midrule
+$n$ & scalar & workload size (respondents per \texttt{analyze()} call) & respondents \\
+$\mathcal{N}=\{35,100,1000\}$ & set & configured workload sizes & -- \\
+$R_n$ & scalar & number of successful measured runs at workload $n$ ($R_n=40$) & -- \\
+$\ell_{n,r}$ & scalar & latency of run $r$ at workload $n$ & ms \\
+$\boldsymbol{\ell}_n\in\mathbb{R}^{R_n}$ & vector & all latencies at workload $n$ & ms \\
+$\theta_{n,r}$ & scalar & throughput of run $r$ & respondents/s \\
+$\hat p_q$ & scalar & empirical $q$-th percentile, $q\in\{50,95,99\}$ & ms \\
+$\mathbf{J}\in\{1,\dots,R_n\}^{B\times R_n}$ & matrix & bootstrap resampling indices & -- \\
+$B$ & scalar & number of bootstrap resamples ($B=10\,000$) & -- \\
+$\varepsilon$ & scalar & error rate over all measured runs & -- \\
+$S(n),\,E(n)$ & scalar & throughput scaling ratio and efficiency & -- \\
+$\mathcal{C},\mathcal{L},\mathcal{R},\mathcal{M},\mathcal{F}$ & sets & configuration, log, clean runs, metrics table, figures & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Metrics}
+\begin{align}
+\ell_{n,r} &= \underbrace{\frac{\Delta_{n,r}}{10^{3}}}_{\mu\mathrm{s}\,\to\,\mathrm{ms}},
+\qquad \Delta_{n,r}=T^{\mathrm{stop}}_{n,r}-T^{\mathrm{start}}_{n,r}
+\label{eq:latency}\\
+\theta_{n,r} &= \underbrace{\frac{n}{\ell_{n,r}/10^{3}}}_{\text{respondents per second}}
+\label{eq:throughput}\\
+\bar\ell_n &= \frac{1}{R_n}\sum_{r=1}^{R_n}\ell_{n,r},
+\qquad
+s_n=\sqrt{\frac{1}{R_n-1}\sum_{r=1}^{R_n}\bigl(\ell_{n,r}-\bar\ell_n\bigr)^{2}}
+\label{eq:meansd}
+\end{align}
+
+With order statistics $\ell_{(1)}\le\dots\le\ell_{(R)}$ and $h_q=(R-1)\,q/100$,
+\begin{equation}
+\hat p_q=\ell_{(\lfloor h_q\rfloor+1)}+\underbrace{\bigl(h_q-\lfloor h_q\rfloor\bigr)}_{\text{interpolation weight}}
+\bigl(\ell_{(\lfloor h_q\rfloor+2)}-\ell_{(\lfloor h_q\rfloor+1)}\bigr),
+\quad q\in\{50,95,99\}.
+\label{eq:percentile}
+\end{equation}
+
+The 95\% percentile-bootstrap confidence interval of a statistic $T$ is
+\begin{equation}
+\mathrm{CI}_{95}(T)=\Bigl[\,Q_{0.025}\bigl(\{T^{*(b)}\}_{b=1}^{B}\bigr),\;
+Q_{0.975}\bigl(\{T^{*(b)}\}_{b=1}^{B}\bigr)\Bigr],
+\quad T^{*(b)}=T\bigl(\boldsymbol{\ell}_n[\mathbf{J}_{b,\cdot}]\bigr),
+\label{eq:bootstrap}
+\end{equation}
+where row $\mathbf{J}_{b,\cdot}$ draws $R_n$ indices with replacement (seed $42$).
+
+\begin{align}
+\varepsilon &= \frac{1}{R_{\mathrm{all}}}\sum_{r=1}^{R_{\mathrm{all}}}
+\mathbf{1}\bigl[\mathrm{status}_r=\text{error}\bigr]
+\label{eq:error}\\
+\ell \text{ is flagged} &\iff \ell<Q_1-1.5\,\mathrm{IQR}\ \ \text{or}\ \ \ell>Q_3+1.5\,\mathrm{IQR}
+\label{eq:iqr}\\
+S(n)&=\frac{\tilde\theta_{n}}{\tilde\theta_{n_0}},\qquad
+E(n)=\frac{S(n)}{n/n_0},\qquad n_0=35
+\label{eq:speedup}
+\end{align}
+where $\tilde\theta_n$ is the median throughput at workload $n$.
+
+\section*{System description}
+\begin{align}
+\mathcal{L}&=\mathrm{Bench}(\mathcal{C}), &
+\mathcal{R}&=\mathrm{Clean}(\mathcal{L}),\\
+\mathcal{M}&=\mathrm{Agg}(\mathcal{R};\,s), &
+\mathcal{F}&=\mathrm{Viz}(\mathcal{M},\mathcal{R}).
+\end{align}
+\end{document}
