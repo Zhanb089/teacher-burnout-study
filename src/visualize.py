@@ -1,9 +1,9 @@
-"""Studio ss8, Steps 3-4: publication-ready figures from the processed data.
+"""Final figures (ss8 steps 3-4, Task 3): publication-ready figures from the processed data.
 
 Input : data/processed/metrics_summary.csv   (written by src/process_data.py)
         data/processed/runs_clean.csv
-Output: reports/figures/fig1_latency_vs_workload.{pdf,png}
-        reports/figures/fig2_latency_distribution.{pdf,png}
+Output: reports/figures/fig1_latency_vs_load.{pdf,png}
+        reports/figures/fig2_distribution_boxplot.{pdf,png}
         reports/figures/captions.md
 
 The three rules of scientific graphics, and where they are applied:
@@ -20,12 +20,12 @@ The three rules of scientific graphics, and where they are applied:
             bootstrap idea as seaborn errorbar=("ci", 95); numbers come from
             metrics_summary.csv, so figure and table always agree)
           - grey hatched band = p25-p75 of the runs, because latency is right-skewed
-          - the violin plot shows the whole distribution, and IQR outliers are marked
+          - the box plot shows every single run, the 95% bootstrap CI of the median, and IQR outliers
 
   Rule 3  Colour and accessibility
           - sns.set_theme(style="whitegrid") with the colour-blind-safe palette
           - colour is never the only cue: each series also has its own line style
-            and marker, and violins carry hatching, so black-and-white print works
+            and marker, and boxes carry hatching, so black-and-white print works
 
 Usage:
     python src/visualize.py
@@ -162,25 +162,36 @@ def plot_latency_vs_workload(metrics: pd.DataFrame, palette: list) -> plt.Figure
 # --------------------------------------------------------------------------
 # Figure 2: distribution and outliers
 # --------------------------------------------------------------------------
-def plot_latency_distribution(runs: pd.DataFrame, palette: list) -> plt.Figure:
+def plot_latency_distribution(runs: pd.DataFrame, metrics: pd.DataFrame, palette: list) -> plt.Figure:
+    """Box plot of the measured runs per workload, with every run drawn and the 95% CI of the median."""
     sizes = sorted(runs["workload_n"].unique())
     order = [str(n) for n in sizes]
     d = runs.assign(n_label=runs["workload_n"].astype(str))
     colors = palette[: len(sizes)]
     hatches = ["", "//", ".."][: len(sizes)]
+    ci = metrics.set_index("n")
 
-    fig, ax = plt.subplots(figsize=(4.8, 3.8), layout="constrained")
-    sns.violinplot(data=d, x="n_label", y="duration_ms", hue="n_label", order=order, hue_order=order,
-                   palette=colors, legend=False, inner="box", cut=0, density_norm="width",
-                   linewidth=1.0, saturation=0.9, ax=ax)
-    bodies = [c for c in ax.collections if isinstance(c, PolyCollection)]
-    for body, hatch in zip(bodies, hatches):
-        body.set_hatch(hatch)  # second cue besides colour (black-and-white print)
-        body.set_alpha(0.75)
+    fig, ax = plt.subplots(figsize=(5.2, 3.9), layout="constrained")
+    sns.boxplot(data=d, x="n_label", y="duration_ms", hue="n_label", order=order, hue_order=order,
+                palette=colors, legend=False, showfliers=False, width=0.5, linewidth=1.0,
+                saturation=0.9, boxprops={"alpha": 0.75}, ax=ax)
+    for patch, hatch in zip(ax.patches, hatches):
+        patch.set_hatch(hatch)  # second cue besides colour (black-and-white print)
 
-    out = d[d["is_outlier_iqr"]]
-    ax.scatter([order.index(s) for s in out["n_label"]], out["duration_ms"], marker="x", s=34,
-               color="black", linewidths=1.3, zorder=5)
+    rng = np.random.default_rng(42)  # fixed seed: the horizontal jitter is reproducible
+    for i, s in enumerate(order):
+        sub = d[d["n_label"] == s]
+        inl, out = sub[~sub["is_outlier_iqr"]], sub[sub["is_outlier_iqr"]]
+        ax.scatter(i + rng.uniform(-0.17, 0.17, len(inl)), inl["duration_ms"], s=7, color="0.25",
+                   alpha=0.55, linewidths=0, zorder=4)
+        ax.scatter(i + rng.uniform(-0.12, 0.12, len(out)), out["duration_ms"], marker="x", s=34,
+                   color="black", linewidths=1.3, zorder=5)
+        row = ci.loc[int(s)]  # 95% bootstrap CI of the median, same numbers as the table
+        ax.errorbar(i, row["latency_ms_p50"],
+                    yerr=[[row["latency_ms_p50"] - row["latency_ms_p50_ci_lo"]],
+                          [row["latency_ms_p50_ci_hi"] - row["latency_ms_p50"]]],
+                    fmt="D", color="black", markerfacecolor="white", markersize=5, capsize=5,
+                    elinewidth=1.4, zorder=6)
 
     counts = d.groupby("n_label").size()
     ax.set_xticks(range(len(order)))
@@ -190,11 +201,12 @@ def plot_latency_distribution(runs: pd.DataFrame, palette: list) -> plt.Figure:
     ax.set_ylabel("Latency (ms)")
 
     handles = [
-        Patch(facecolor="0.8", edgecolor="black", label="Distribution (violin) with box = p25-p50-p75"),
-        Line2D([0], [0], marker="x", color="black", linestyle="", markersize=6,
-               label="IQR outlier (kept in statistics)"),
+        Patch(facecolor="0.8", edgecolor="black", label="Box: p25-p50-p75, whiskers 1.5 x IQR"),
+        Line2D([0], [0], marker="o", color="0.25", linestyle="", markersize=3, alpha=0.7, label="Single run"),
+        Line2D([0], [0], marker="D", color="black", markerfacecolor="white", markersize=5, label="Median, 95% bootstrap CI"),
+        Line2D([0], [0], marker="x", color="black", linestyle="", markersize=6, label="IQR outlier (kept in statistics)"),
     ]
-    ax.legend(handles=handles, loc="upper left", fontsize=9)
+    ax.legend(handles=handles, loc="upper left", fontsize=8)
     return fig
 
 
@@ -211,9 +223,9 @@ processed per second) with its 95% bootstrap CI; both axes are logarithmic. Warm
 With 40 runs per size, p99 is determined by the slowest one or two runs, so its interval is wide.
 
 **Figure 2. Distribution of latency per workload size.**
-Violins show the density of the {total} measured runs; the inner box marks p25, p50 and p75.
-Crosses mark runs outside 1.5 x IQR of their workload size. They are flagged, not removed.
-Latency axis starts at 0 ms.
+Boxes mark p25, p50 and p75 of the {total} measured runs (whiskers 1.5 x IQR); dots are the single runs.
+The white diamond with an error bar is the median with its 95% bootstrap CI. Crosses mark runs outside
+1.5 x IQR of their workload size. They are flagged, not removed. Latency axis starts at 0 ms.
 """
 
 
@@ -240,8 +252,8 @@ def main(argv: list[str] | None = None) -> int:
     metrics, runs = load_inputs(args.metrics, args.runs)
 
     written: list[Path] = []
-    written += save_figure(plot_latency_vs_workload(metrics, palette), "fig1_latency_vs_workload", args.out_dir)
-    written += save_figure(plot_latency_distribution(runs, palette), "fig2_latency_distribution", args.out_dir)
+    written += save_figure(plot_latency_vs_workload(metrics, palette), "fig1_latency_vs_load", args.out_dir)
+    written += save_figure(plot_latency_distribution(runs, metrics, palette), "fig2_distribution_boxplot", args.out_dir)
 
     (args.out_dir / "captions.md").write_text(
         CAPTIONS.format(boot=f"{int(metrics['ci_n_boot'].iloc[0]):,}", per_size=int(metrics["n_ok"].iloc[0]),

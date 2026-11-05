@@ -2,7 +2,7 @@
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 ![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)
-![Status](https://img.shields.io/badge/status-pipeline%20skeleton-orange.svg)
+![Status](https://img.shields.io/badge/status-task%203%20release-brightgreen.svg)
 
 **Authors:** Zhanat, Yergali
 **Repository:** https://github.com/Zhanb089/teacher-burnout-study
@@ -38,90 +38,94 @@ teacher-burnout-study/
 ├── LICENSE
 ├── Dockerfile               # pinned base image, runs the pipeline
 ├── requirements.txt         # exact dependency versions
+├── requirements-notebook.txt# + Jupyter, only needed to re-run the notebook
 ├── config.yaml              # all experiment parameters
 ├── data/
 │   ├── sample/              # 8 fictional rows to test the pipeline
-│   └── raw/
-│       └── test_run.jsonl   # first measurement log: 10 warm-up + 120 timed runs (fictional data)
-├── src/
-│   └── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis + measurement harness (--bench)
-├── notebooks/               # exploratory notebooks (empty for now)
+│   ├── raw/
+│   │   └── test_run.jsonl   # measurement log: 10 warm-up + 120 timed + 30 edge runs (fictional data)
+│   └── processed/
+│       ├── metrics_summary.csv  # median, p95, p99, mean, SD, 95% bootstrap CI per workload
+│       ├── runs_clean.csv       # one row per measured run, with outlier flags
+│       └── edge_cases.csv       # outcome of each edge-case scenario
 ├── docs/
+│   ├── domain_model.md      # C4 model (context, containers, components) with metric collection points
 │   └── methodology_card.md  # methodology passport card
+├── notebooks/
+│   └── 01_data_analysis.ipynb   # executed notebook: ingestion, statistics, figures
+├── reports/
+│   └── figures/             # fig1_latency_vs_load, fig2_distribution_boxplot (.pdf + .png 300 DPI), captions.md
+├── src/
+│   ├── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis + measurement harness (--bench)
+│   ├── process_data.py      # cleaning, warm-up filter, error-rate guardrail, statistics, bootstrap CI
+│   └── visualize.py         # final publication figures
 └── results/                 # run_log.txt and summary.json (generated, not committed)
 ```
 
-## System requirements
+## Results & Discussion
 
-- Any OS with Docker 24+ (Linux, macOS, Windows with WSL2); no GPU needed.
-- Without Docker: Python 3.11 and `pip install -r requirements.txt`.
-- A few MB of disk space; a run on the sample takes about a second.
+The pipeline itself was benchmarked: how do latency and throughput of the analysis script change with the number
+of processed respondents? All numbers come from `data/raw/test_run.jsonl` (fictional respondents, one machine,
+seed 42): 10 warm-up runs discarded, 40 measured runs per workload, 0 of 120 runs failed (error-rate guardrail).
+The notebook [`notebooks/01_data_analysis.ipynb`](notebooks/01_data_analysis.ipynb) reproduces every number.
 
-## Quickstart
+**Baseline** is the smallest workload (n = 35). The larger workloads are
+*conditions* of the same script, not competing methods, so there is no separate "proposed method" row.
 
-Get the code once (`git clone https://github.com/Zhanb089/teacher-burnout-study.git`, then open the
-folder). After that, two commands (they work the same in Linux, macOS, Windows PowerShell and cmd):
+| Workload n | Latency, ms: median (p25-p75) | p95, ms [95% CI] | p99, ms [95% CI] | Throughput, resp./s: median (p25-p75) | Speed-up S(n) |
+|---|---|---|---|---|---|
+| 35 (baseline) | 43.9 (42.2-46.2) | 53.8 [47.1, 69.3] | 64.1 [51.1, 69.3] | 797 (758-830) | 1.00 |
+| 100 | 43.8 (41.9-45.9) | 53.3 [48.0, 62.6] | 59.0 [51.1, 62.6] | 2,283 (2,177-2,384) | 2.86 |
+| 1000 | 46.8 (45.6-50.4) | 55.3 [51.5, 89.7] | 82.1 [53.0, 89.7] | 21,371 (19,850-21,923) | 26.8 |
 
-```bash
-docker build -t burnout-analysis .
-docker run --rm burnout-analysis
+Latency is right-skewed, so medians and percentiles are reported; mean ± SD is in
+[`data/processed/metrics_summary.csv`](data/processed/metrics_summary.csv). Confidence intervals are percentile
+bootstrap (10,000 resamples, seed 42).
+
+![Latency Plot](reports/figures/fig1_latency_vs_load.png)
+
+*Figure 1. (a) Latency percentiles with 95% bootstrap CI (coloured) and p25-p75 of the runs (grey hatched).
+(b) Median throughput, log scale.*
+
+![Distribution Boxplot](reports/figures/fig2_distribution_boxplot.png)
+
+*Figure 2. Single runs per workload; box = p25/p50/p75; diamond = median with 95% CI; crosses = IQR outliers (kept).*
+
+**Discussion.**
+
+- The median latency stays at 44-47 ms while the workload grows 28 times; throughput grows 26.8 times
+  (efficiency E(1000) = 0.94). The cost of a run is mostly a fixed overhead.
+- 35 and 100 respondents cannot be told apart (the intervals of the medians overlap); 1000 respondents is about
+  3 ms slower and its interval does not overlap theirs.
+- p99 is the least certain value: with 40 runs it depends on the one or two slowest runs, hence the wide interval.
+- Limits: one machine and container, synthetic respondents, sequential runs, three workload sizes.
+
+## Domain model
+
+The C4 model (system context, containers, components of the benchmark harness and of the data processor, domain
+entities) with the **metric collection points M1-M5** is in [`docs/domain_model.md`](docs/domain_model.md).
+Short version of the data flow:
+
+```mermaid
+flowchart LR
+    B["benchmark.py<br/>M1 timer, M2 status"] -->|"test_run.jsonl"| P["process_data.py<br/>M4 error rate, M5 stats + CI"]
+    P -->|"metrics_summary.csv"| V["visualize.py"]
+    V --> F[("fig1, fig2<br/>.pdf + .png")]
+    classDef metric fill:#fff3cd,stroke:#b8860b,stroke-width:2px;
+    class B,P metric;
 ```
 
-The container prints the full log to the screen. To also save `run_log.txt` and `summary.json` on your
-computer, mount the results folder:
+## Reproduce the results
 
 ```bash
-# Linux / macOS
-docker run --rm -v "$(pwd)/results:/app/results" burnout-analysis
-# Windows PowerShell
-docker run --rm -v "${PWD}/results:/app/results" burnout-analysis
-```
-
-Without Docker (Python 3.11):
-
-```bash
-python -m venv .venv
-# Linux / macOS: source .venv/bin/activate      Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python src/benchmark.py --config config.yaml
+python src/process_data.py      # raw log -> data/processed/*.csv   (warm-up removed, bootstrap seed 42)
+python src/visualize.py         # -> reports/figures/fig1_*.{pdf,png}, fig2_*.{pdf,png}
+
+# notebook (re-run everything): Kernel -> Restart & Run All
+pip install -r requirements-notebook.txt
+jupyter nbconvert --to notebook --execute --inplace notebooks/01_data_analysis.ipynb
 ```
-
-To analyse real data, set `paths.data` in `config.yaml` to your CSV (same columns as the sample).
-
-## Measurement run (`--bench`)
-
-Besides the analysis itself, the script can measure how long the analysis takes, as a clean experiment:
-
-```bash
-python src/benchmark.py --config config.yaml --bench
-# Docker, saving the log to your computer (Linux / macOS; in PowerShell use ${PWD})
-docker run --rm --cpus=2 --memory=2g -v "$(pwd)/data/raw:/app/data/raw" burnout-analysis \
-    python src/benchmark.py --config config.yaml --bench
-```
-
-What happens:
-
-1. Fictional respondents are generated first (`synthetic` section of `config.yaml`), for 35, 100 and 1000
-   people, so the load is not only our planned survey size.
-2. 10 warm-up runs are executed and logged with `"phase": "warmup"`. They are never used in the statistics.
-3. 120 timed runs follow (`"phase": "measure"`). The stopwatch (`time.perf_counter_ns`) surrounds only
-   `analyze()`. Generation, copying, printing and file writing are outside it, and the log is written
-   only after the series is finished.
-4. `data/raw/test_run.jsonl` gets one JSON line per run (microsecond timestamp, duration, status, error),
-   a first line with the environment (Python and library versions, CPU, RAM, git commit, config hash, seed)
-   and a last line with median, p95, p99 and the error rate. Failed runs are counted in the error rate,
-   not dropped.
-
-5. After the timed runs, six broken datasets are run 5 times each as phase `edge`: empty answers, answers
-   outside 0-6, only one school type, tiny groups, duplicated respondents and "straight-lining" (the same
-   answer everywhere). They are reported separately and never mixed into the main statistics. The analysis
-   rejects the first three and the duplicates with a clear error (logged as `status: error`); tiny groups
-   and straight-lining are processed and show up as a failed guardrail.
-
-All parameters (number of runs, warm-up size, workload sizes, distributions, edge cases) are in `config.yaml`.
-Inside Docker there is no git, so pass the commit yourself: `-e GIT_COMMIT=$(git rev-parse --short HEAD)`.
-The committed `test_run.jsonl` contains only fictional data. Real survey exports in `data/raw/` stay
-ignored by git.
 
 ## Planned analyses
 
@@ -149,7 +153,8 @@ the pipeline runs; the group-size guardrail correctly reports FAIL):
 - [x] Measurement log with warm-up runs separated from timed runs (`data/raw/test_run.jsonl`)
 - [x] Sample data to test the pipeline
 - [x] One command to build and one to run
-- [ ] Real survey data analysed (planned for Week 7)
+- [x] Raw log, processing script, executed notebook, final figures (`.pdf` + 300 DPI `.png`), domain model
+- [ ] Real survey data analysed
 
 ## Data note
 

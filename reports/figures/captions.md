@@ -8,6 +8,6 @@ processed per second) with its 95% bootstrap CI; both axes are logarithmic. Warm
 With 40 runs per size, p99 is determined by the slowest one or two runs, so its interval is wide.
 
 **Figure 2. Distribution of latency per workload size.**
-Violins show the density of the 120 measured runs; the inner box marks p25, p50 and p75.
-Crosses mark runs outside 1.5 x IQR of their workload size. They are flagged, not removed.
-Latency axis starts at 0 ms.
+Boxes mark p25, p50 and p75 of the 120 measured runs (whiskers 1.5 x IQR); dots are the single runs.
+The white diamond with an error bar is the median with its 95% bootstrap CI. Crosses mark runs outside
+1.5 x IQR of their workload size. They are flagged, not removed. Latency axis starts at 0 ms.
