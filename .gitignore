@@ -24,8 +24,7 @@ results/*
 
 data/raw/*
 !data/raw/test_run.jsonl
-data/processed/
-!data/sample/
+
 *.xlsx
 *.xls
 *.sav
