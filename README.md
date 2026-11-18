@@ -36,7 +36,7 @@ scale and at least 15 complete questionnaires per group.
 teacher-burnout-study/
 ├── README.md
 ├── LICENSE
-├── Dockerfile               # pinned base image, runs the pipeline
+├── Dockerfile               # pinned base image, runs the questionnaire analysis (src/benchmark.py)
 ├── requirements.txt         # exact dependency versions
 ├── requirements-notebook.txt# + Jupyter, only needed to re-run the notebook
 ├── config.yaml              # all experiment parameters
@@ -54,11 +54,15 @@ teacher-burnout-study/
 ├── notebooks/
 │   └── 01_data_analysis.ipynb   # executed notebook: ingestion, statistics, figures
 ├── reports/
-│   └── figures/             # fig1_latency_vs_load, fig2_distribution_boxplot (.pdf + .png 300 DPI), captions.md
+│   ├── figures/             # fig1_latency_vs_load, fig2_distribution_boxplot (.pdf + .png 300 DPI), captions.md
+│   ├── paper_section_4.md   # paper section 4 (results and discussion), IEEE style, LaTeX inside Markdown
+│   └── latex/               # LaTeX sources of the formulas, results table and multi-panel figure (studio ss9)
+├── paper/                  # IEEE paper in LaTeX (studio ss10): main.tex, sections/, references.bib, figures/
 ├── src/
 │   ├── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis + measurement harness (--bench)
 │   ├── process_data.py      # cleaning, warm-up filter, error-rate guardrail, statistics, bootstrap CI
-│   └── visualize.py         # final publication figures
+│   ├── visualize.py         # final publication figures
+│   └── visualize_combined.py# optional three-panel figure for the paper (studio ss9)
 └── results/                 # run_log.txt and summary.json (generated, not committed)
 ```
 
@@ -125,6 +129,13 @@ python src/visualize.py         # -> reports/figures/fig1_*.{pdf,png}, fig2_*.{p
 # notebook (re-run everything): Kernel -> Restart & Run All
 pip install -r requirements-notebook.txt
 jupyter nbconvert --to notebook --execute --inplace notebooks/01_data_analysis.ipynb
+```
+
+With Docker (runs the questionnaire analysis on the sample data):
+
+```bash
+docker build -t burnout-analysis .
+docker run --rm burnout-analysis
 ```
 
 ## Planned analyses

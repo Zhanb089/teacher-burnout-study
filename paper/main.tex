@@ -1,0 +1,79 @@
+% =====================================================================
+%  main.tex  --  IEEE conference paper (IEEEtran)
+%  Project layout (Overleaf):
+%    main.tex            this file: preamble + the order of sections
+%    sections/*.tex      one file per IMRaD section, pulled in with \input
+%    figures/            PDF figures (vector) and PNG (300 dpi)
+%    references.bib      bibliography exported from Zotero (Better BibTeX)
+% =====================================================================
+\documentclass[conference]{IEEEtran}
+% To switch to ACM, replace the line above with (and remove the IEEE-only blocks below):
+%   \documentclass[sigconf]{acmart}        % two columns
+%   \documentclass[manuscript]{acmart}     % one column, for review
+% To get one column in IEEEtran, use \documentclass[journal,onecolumn]{IEEEtran}.
+
+% ---------- encoding, fonts, typography ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% ---------- citations (IEEE: numeric, sorted and compressed [1]--[3]) ----------
+\usepackage{cite}
+
+% ---------- mathematics ----------
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}   % after amsmath, otherwise microtype cannot patch equation numbers
+
+% ---------- tables without vertical lines ----------
+\usepackage{booktabs}
+
+% ---------- figures ----------
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+% ---------- cross-references (load hyperref LAST) ----------
+\usepackage[hidelinks]{hyperref}
+% Names printed by \autoref
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\def\equationautorefname{Eq.}
+\def\figureautorefname{Fig.}
+
+\begin{document}
+
+\title{Professional Burnout of Teachers\\
+in State and Private Schools}
+
+% TODO: add surnames and check the affiliation text
+\author{\IEEEauthorblockN{Zhanat}
+\IEEEauthorblockA{Narxoz University}
+\and
+\IEEEauthorblockN{Yergali}
+\IEEEauthorblockA{Narxoz University}}
+
+\maketitle
+
+\begin{abstract}
+% Planned-study abstract; after data collection, replace the last sentence by the main results.
+Professional burnout is a widespread risk for teachers, but it may depend on the working conditions of the school.
+We describe a planned cross-sectional study that compares burnout of teachers in state and private schools
+using the Maslach Burnout Inventory (30--40 teachers, 15--20 per group).
+The groups are compared with Welch's $t$-test and the Mann--Whitney test, effect sizes are reported as Cohen's $d$,
+and uncertainty is shown with bootstrap confidence intervals.
+The analysis runs in a reproducible containerised pipeline, which processed 120 test runs without errors
+with a median latency of 44--47\,ms for 35 to 1000 respondents.
+The study protocol is fixed before data collection to keep the analysis transparent.
+\end{abstract}
+
+\begin{IEEEkeywords}
+teacher burnout, Maslach Burnout Inventory, state and private schools, working conditions, cross-sectional study
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_methodology}
+% \input{sections/03_results}      % added in the next studios
+% \input{sections/04_discussion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

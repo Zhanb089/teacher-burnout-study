@@ -4,7 +4,7 @@ This section reports how the survey-analysis pipeline of the teacher-burnout stu
 
 ## 4.1 Setup
 
-Three workloads were measured, $n \in \{35, 100, 1000\}$ respondents, with $R_n = 40$ measured runs each ($R_{\mathrm{all}} = 120$) after 10 discarded warm-up runs. For every run the latency $\ell_{n,r}$ (Eq. \ref{eq:latency}) and the throughput $\theta_{n,r}$ (Eq. \ref{eq:throughput}) were recorded. Percentiles use linear interpolation (Eq. \ref{eq:percentile}) and their uncertainty is a percentile-bootstrap interval with $B = 10\,000$ resamples (Eq. \ref{eq:bootstrap}). Runs outside the IQR fences (Eq. \ref{eq:iqr}) were flagged but kept, because they are real behaviour of the system and not recording errors. The baseline for scaling is $n_0 = 35$, the size of the pilot sample.
+Three workloads were measured, $n \in \{35, 100, 1000\}$ respondents, with $R_n = 40$ measured runs each ($R_{\mathrm{all}} = 120$) after 10 discarded warm-up runs. For every run the latency $\ell_{n,r}$ (Eq. \ref{eq:latency}) and the throughput $\theta_{n,r}$ (Eq. \ref{eq:throughput}) were recorded. Percentiles use linear interpolation (Eq. \ref{eq:percentile}) and their uncertainty is a percentile-bootstrap interval with $B = 10\,000$ resamples (Eq. \ref{eq:bootstrap}). Runs outside the IQR fences (Eq. \ref{eq:iqr}) were flagged but kept, because they are real behaviour of the system and not recording errors. The baseline for scaling is $n_0 = 35$, the smallest workload, which is of the same order as the planned questionnaire sample (30--40 teachers).
 
 ## 4.2 Results
 
@@ -62,7 +62,7 @@ All (pooled) & 45.1 (43.2--47.4) & 53.8 [51.9, 69.3] & 70.0 [54.4, 89.7] & -- & 
 
 ## 4.3 Discussion
 
-**Meaning for the study.** The questionnaire data of the study (a few dozen teachers per school type) are at the size of the smallest workload, where one analysis run takes about 44 ms. Re-running the full pipeline after every data update is therefore practically free, and the analysis would still take less than 0.1 s for a thousand respondents. Performance is not a constraint for the planned comparison of state and private schools.
+**Meaning for the study.** The planned questionnaire sample of the study (30--40 teachers in total, 15--20 per school type) is of the same size as the smallest workload, where one analysis run takes about 44 ms. Re-running the full pipeline after every data update is therefore practically free, and the analysis would still take less than 0.1 s for a thousand respondents. Performance is not a constraint for the planned comparison of state and private schools.
 
 **Limitations.** (i) All runs were made on one machine and one container image, so absolute times describe this environment and only the relative picture (flat latency, near-linear throughput) is expected to transfer. (ii) Three workload sizes are enough to see a trend but not to fit a scaling law. (iii) The 40 runs per size give precise medians but imprecise tail percentiles. (iv) The workloads are synthetic respondents with the structure of the MBI questionnaire, not real answers. (v) Runs were executed one after another, so effects of concurrent use were not measured.
 
