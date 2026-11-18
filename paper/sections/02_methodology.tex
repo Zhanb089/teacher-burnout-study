@@ -1,144 +1,198 @@
 \section{Methodology}\label{sec:method}
 
-This section describes the planned study design, the instrument, the
-statistical methods and the validation of the analysis pipeline.
-All symbols are collected in \autoref{tab:notation}.
-
 \subsection{Design and Participants}\label{sec:design}
 The study is cross-sectional: every teacher fills in the questionnaire once.
 Two groups are compared, teachers of state schools and teachers of private
-schools. The planned sample is 30--40 teachers in total (15--20 per group),
-and a group is analysed only if it contains at least 15 respondents.
-Participation is voluntary and anonymous.
+schools. The planned sample is 30--40 teachers (15--20 per group), and a group
+is analysed only if it has at least 15 respondents. The teachers are recruited
+by ``convenience sampling'', through personal contacts, from several schools
+of one city. Participation is voluntary and anonymous: no names and no school names are
+collected, and raw exports are not published with the code.
+A sensitivity analysis (\autoref{tab:power}) shows what this sample can detect: with
+15 teachers per group, a two-sided test at the 0.05 level reaches a power of 0.80
+only for $d \approx 1.06$, and with 20 per group for $d \approx 0.91$. The study is
+therefore designed to find large differences, and a non-significant result will
+not be read as evidence that there is no difference.
+
+\begin{table}[b]
+  \centering
+  \caption{Sensitivity of the planned sample (two-sided two-sample $t$-test, $\alpha=0.05$,
+  equal group sizes, noncentral $t$ distribution).}
+  \label{tab:power}
+  \footnotesize
+  \begin{tabular}{@{}rccc@{}}
+    \toprule
+    Per group & $d$ at power 0.80 & Power, $d=0.5$ & Power, $d=0.8$ \\
+    \midrule
+    15 & 1.06 & 0.26 & 0.56 \\
+    20 & 0.91 & 0.34 & 0.69 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Instrument and Scoring}\label{sec:instrument}
-Burnout is measured with the Maslach Burnout Inventory (MBI)
-\cite{maslach1981mbi,maslach2001job} in the Russian-language adaptation of
-Vodopyanova and Starchenkova~\cite{vodopyanova2008burnout}. The inventory has
-three scales: emotional exhaustion (EE, 9 items), depersonalization (DP, 5
-items) and reduced personal accomplishment (RPA, 8 items). Each item is
-answered on a scale from 0 to 6, so the scale score is the sum of its items:
+Burnout is measured with the Maslach Burnout Inventory
+(MBI)~\cite{maslach1981mbi,maslach2001job} in the Russian-language adaptation
+of Vodopyanova and Starchenkova~\cite{vodopyanova2008burnout}. The inventory
+has three scales: emotional exhaustion (EE, 9 items), depersonalization (DP, 5
+items) and reduced personal accomplishment (RPA, 8 items); \autoref{tab:mbi} lists
+them. Each item is scored from 0 to 6, and the score of a scale is the sum of
+its items (\autoref{eq:scale}):
+\begin{table}[b]
+  \centering
+  \caption{Scales of the MBI and the meaning of a high score.}
+  \label{tab:mbi}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}lccl@{}}
+    \toprule
+    Scale & Items & Range & High score \\
+    \midrule
+    Emotional exhaustion (EE) & 9 & 0--54 & more burnout \\
+    Depersonalization (DP) & 5 & 0--30 & more burnout \\
+    Reduced accomplishment (RPA) & 8 & 0--48 & less burnout \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 \begin{equation}
   S_k = \sum_{i \in I_k} x_i, \qquad k \in \{\mathrm{EE},\mathrm{DP},\mathrm{RPA}\},
   \label{eq:scale}
 \end{equation}
 where $I_k$ is the set of items of scale $k$ and $x_i$ is the answer to item
-$i$. The scores range from 0 to 54 for EE, from 0 to 30 for DP and from 0 to
-48 for RPA. To obtain one overall burnout index, each scale is standardised
-over the sample and the three values are combined:
+$i$. One overall
+index combines the standardised scales (\autoref{eq:index}):
 \begin{equation}
   B = z(S_{\mathrm{EE}}) + z(S_{\mathrm{DP}}) - z(S_{\mathrm{RPA}}),
-  \qquad z(S) = \frac{S - \bar{S}}{s_S},
+  \quad z(S) = \frac{S - \bar{S}}{s_S}.
   \label{eq:index}
 \end{equation}
-where $\bar{S}$ and $s_S$ are the sample mean and standard deviation of the
-scale score. The sign of $z(S_{\mathrm{RPA}})$ is negative because a high
-value on this scale means a high personal accomplishment, that is, less burnout.
+The sign of $z(S_{\mathrm{RPA}})$ is negative because a high value on this
+scale means a high accomplishment, that is, less burnout.
 
-\subsection{Reliability}\label{sec:reliability}
-The internal consistency of each scale is checked with Cronbach's
-$\alpha$~\cite{cronbach1951alpha}:
+\subsection{Reliability and Group Comparison}\label{sec:tests}
+The internal consistency of a scale with $m$ items, item variances
+$\sigma_i^2$ and total variance $\sigma_T^2$ is checked with Cronbach's
+$\alpha$~\cite{cronbach1951alpha} (\autoref{eq:alpha}); a scale is accepted if $\alpha \ge 0.7$:
 \begin{equation}
-  \alpha = \frac{m}{m-1}\left(1 - \frac{\sum_{i=1}^{m}\sigma_i^{2}}{\sigma_{T}^{2}}\right),
+  \alpha = \frac{m}{m-1}\left(1 - \frac{\sum_{i=1}^{m}\sigma_i^{2}}{\sigma_{T}^{2}}\right).
   \label{eq:alpha}
 \end{equation}
-where $m$ is the number of items in the scale, $\sigma_i^2$ is the variance of
-item $i$ and $\sigma_T^2$ is the variance of the scale score. A scale is
-accepted as reliable if $\alpha \ge 0.7$.
+The main comparison (RQ1) is the difference in EE between the groups. For group
+means $\bar{x}_g$, standard deviations $s_g$ and sizes $n_g$, we use Welch's
+$t$-test~\cite{welch1947t}, which does not assume equal variances and is
+recommended as a default for two groups~\cite{delacre2017welch}
+(\autoref{eq:welch}), and report the effect size $d$ (\autoref{eq:cohen}):
+\begin{align}
+  t &= \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^{2}/n_1 + s_2^{2}/n_2}}, \label{eq:welch}\\
+  d &= \frac{\bar{x}_1 - \bar{x}_2}{s_p},\quad
+  s_p = \sqrt{\tfrac{(n_1-1)s_1^{2} + (n_2-1)s_2^{2}}{n_1+n_2-2}}. \label{eq:cohen}
+\end{align}
+The Mann--Whitney test~\cite{mann1947u} serves as a robustness check, and
+uncertainty is shown with percentile-bootstrap confidence intervals~\cite{efron1979bootstrap}.
+All tests are two-tailed with a significance level of 0.05, because earlier
+studies point in different directions~\cite{doss2018special,bahrami2019efl} and the
+direction of the difference is therefore left open. \autoref{tab:plan} links every
+research question to its analysis: RQ2 repeats the comparison for each scale, and RQ3 uses
+Spearman correlations and hierarchical regression.
 
-\subsection{Group Comparison}\label{sec:tests}
-The main comparison (RQ1) is the difference in emotional exhaustion between the
-two groups. For group means $\bar{x}_1,\bar{x}_2$, standard deviations
-$s_1,s_2$ and sizes $n_1,n_2$, we use Welch's $t$-test~\cite{welch1947t}, which
-does not assume equal variances:
-\begin{equation}
-  t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^{2}/n_1 + s_2^{2}/n_2}}.
-  \label{eq:welch}
-\end{equation}
-The size of the difference is reported as Cohen's $d$:
-\begin{equation}
-  d = \frac{\bar{x}_1 - \bar{x}_2}{s_p},
-  \qquad
-  s_p = \sqrt{\frac{(n_1-1)s_1^{2} + (n_2-1)s_2^{2}}{n_1+n_2-2}}.
-  \label{eq:cohen}
-\end{equation}
-Because of the small groups, the Mann--Whitney test~\cite{mann1947u} is
-computed as a robustness check, and the uncertainty of the estimates is shown
-with percentile-bootstrap confidence intervals~\cite{efron1979bootstrap}.
-All tests are two-tailed with significance level $\alpha_{\mathrm{test}}=0.05$.
-RQ2 repeats the comparison for each scale separately, and RQ3 is exploratory
-(Spearman correlations and hierarchical regression in JASP).
+\begin{table}[b]
+  \centering
+  \caption{Analysis plan. The null hypothesis for RQ1 and RQ2 is that the two groups do not differ.}
+  \label{tab:plan}
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}lp{1.45in}p{1.5in}@{}}
+    \toprule
+    RQ & Comparison or association & Method and output \\
+    \midrule
+    RQ1 & EE of state vs.\ private school teachers (main) & Welch $t$-test, Cohen's $d$, Mann--Whitney check, bootstrap CI \\
+    RQ2 & EE, DP and RPA, each scale separately & The same tests, one per scale \\
+    RQ3 & Working conditions and burnout (exploratory) & Spearman $\rho$, hierarchical regression \\
+    Quality & Reliability and group size & $\alpha \ge 0.7$ (\autoref{eq:alpha}), at least 15 per group \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-\subsection{Pipeline Validation}\label{sec:pipeline}
-The analysis is run by a Python pipeline in a pinned Docker image with a fixed
-random seed (42). To show that the pipeline is fast enough to be re-run after
-every data update, we measured it on synthetic questionnaires with
-$n \in \{35,100,1000\}$ respondents. For a run $r$ with workload $n$ and
-duration $\ell$, the throughput and the scaling relative to the baseline
-$n_0=35$ are
+\subsection{Pipeline and Data Checks}\label{sec:pipeline}
+\autoref{fig:arch} shows the architecture. The pipeline is a Python program in
+a pinned Docker image with a fixed random seed (42), so that every number can
+be reproduced~\cite{boettiger2015docker}. The code, the data and the Docker
+instructions are published at \url{https://github.com/Zhanb089/teacher-burnout-study}
+(release v1.0). Before scoring, the pipeline applies guardrails: incomplete
+questionnaires, answers outside the range 0--6 and duplicated respondent
+identifiers are rejected with an explicit message, a comparison is made only if
+both groups have at least 15 respondents, and the share of failed runs is always
+reported and never dropped silently. The analysis then proceeds in six steps:
+\begin{enumerate}\itemsep0pt
+  \item load the data and apply the guardrails;
+  \item score the three scales (\autoref{eq:scale}) and the index (\autoref{eq:index});
+  \item compute $\alpha$ for every scale (\autoref{eq:alpha}) and report the scales below 0.7;
+  \item test RQ1 and RQ2 with \autoref{eq:welch} and \autoref{eq:cohen};
+  \item compute the bootstrap intervals and the robustness check;
+  \item write the tables and figures.
+\end{enumerate}
+
+\begin{figure}[b]
+  \centering
+  \begin{tikzpicture}[box/.style={draw, rounded corners=1pt, font=\scriptsize,
+      align=center, minimum height=7mm, text width=15mm, inner sep=1pt}, >=Stealth, node distance=4mm]
+    \node[box] (a) {Survey data\\(CSV)};
+    \node[box, right=of a] (b) {Checks\\(guardrails)};
+    \node[box, right=of b] (c) {Scoring\\EE, DP, RPA, $B$};
+    \node[box, right=of c] (d) {Statistics\\$\alpha$, $t$, $d$, CI};
+    \node[box, below=5mm of c] (e) {Tables and\\figures};
+    \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d);
+    \draw[->] (d.south) |- (e.east);
+    \node[draw, dashed, fit=(a)(b)(c)(d)(e), inner sep=2.5mm,
+      label={[font=\scriptsize]below:Benchmark harness: timer, seed 42, Docker image}] {};
+  \end{tikzpicture}
+  \caption{Architecture of the analysis pipeline. The benchmark harness runs the
+  whole chain repeatedly and records the duration of every run.}
+  \label{fig:arch}
+\end{figure}
+
+
+\subsection{Measurement Procedure}\label{sec:measure}
+To test whether the pipeline can be re-run after every data update, we measured
+it on synthetic respondents with the structure of the MBI; \autoref{tab:params}
+lists the parameters. Each run is timed with a monotonic high-resolution clock,
+and the garbage collector is switched off during timing so that its pauses do not
+enter the measurement. The first ten runs are discarded as warm-up, and the
+workloads are run in turn. Percentiles use linear interpolation, and the 95\,\%
+interval of every statistic is a percentile-bootstrap interval from $B=10\,000$
+resamples of the runs. A run with latency $\ell$ is flagged as an outlier if
+(\autoref{eq:iqr})
+
+\begin{table}[b]
+  \centering
+  \caption{Parameters of the study and of the performance measurement.}
+  \label{tab:params}
+  \footnotesize
+  \begin{tabular}{@{}lrlr@{}}
+    \toprule
+    Parameter & Value & Parameter & Value \\
+    \midrule
+    Planned sample & 30--40 & Workloads $n$ & 35, 100, 1000 \\
+    Minimum per group & 15 & Runs per $n$ & 40 \\
+    Significance level & 0.05 & Warm-up runs & 10 \\
+    Reliability $\alpha$ & $\ge 0.7$ & Bootstrap $B$ & 10\,000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \begin{equation}
-  \theta = \frac{n}{\ell},
-  \qquad
-  S(n) = \frac{\theta(n)}{\theta(n_0)},
-  \qquad
+  \ell < p_{25} - 1.5\,\mathrm{IQR}
+  \ \text{ or } \
+  \ell > p_{75} + 1.5\,\mathrm{IQR},
+  \quad \mathrm{IQR} = p_{75} - p_{25}.
+  \label{eq:iqr}
+\end{equation}
+For a run with workload $n$ and duration $\ell$, the throughput $\theta$, the
+speed-up $S$ relative to the baseline $n_0=35$ and the efficiency $E$ are
+(\autoref{eq:speedup})
+\begin{equation}
+  \theta = \frac{n}{\ell},\quad
+  S(n) = \frac{\theta(n)}{\theta(n_0)},\quad
   E(n) = \frac{S(n)}{n/n_0}.
   \label{eq:speedup}
 \end{equation}
-Each workload was run 40 times after 10 discarded warm-up runs, and the
-latency percentiles are reported with 95\,\% bootstrap intervals
-($B=10\,000$ resamples). The setup is summarised in \autoref{tab:params}; the
-measured latency and throughput are shown in \autoref{fig:pipeline}.
-The measurements concern only the software and contain no information about
-teachers.
-
-\begin{table}[t]
-  \centering
-  \caption{Notation used in \autoref{eq:scale}--\autoref{eq:speedup}.}
-  \label{tab:notation}
-  \small
-  \begin{tabular}{@{}ll@{}}
-    \toprule
-    Symbol & Meaning \\
-    \midrule
-    $S_k$ & sum score of scale $k$ (EE, DP, RPA) \\
-    $z(\cdot)$ & standardised score \\
-    $B$ & overall burnout index \\
-    $\alpha$ & Cronbach's alpha \\
-    $t$, $d$ & Welch statistic, Cohen's effect size \\
-    $\theta$, $S$, $E$ & throughput, speed-up, efficiency \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \caption{Parameters of the study and of the pipeline validation.}
-  \label{tab:params}
-  \small
-  \begin{tabular}{@{}lr@{}}
-    \toprule
-    Parameter & Value \\
-    \midrule
-    Planned sample (teachers) & 30--40 \\
-    Minimum per group & 15 \\
-    Significance level & 0.05 \\
-    Reliability threshold $\alpha$ & 0.7 \\
-    Random seed & 42 \\
-    Workloads $n$ & 35, 100, 1000 \\
-    Measured runs per $n$ & 40 \\
-    Warm-up runs & 10 \\
-    Bootstrap resamples $B$ & 10\,000 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{fig_combined_latency_throughput.pdf}
-  \caption{Pipeline validation on synthetic data: (a)~latency percentiles,
-  (b)~median throughput, (c)~distribution of run latency for
-  $n=35$, $100$, $1000$ respondents (40 runs each). Bands are 95\,\%
-  bootstrap intervals. Median latency stays between 43.8 and 46.8\,ms while
-  throughput grows from 797 to 21\,371 respondents/s.}
-  \label{fig:pipeline}
-\end{figure*}

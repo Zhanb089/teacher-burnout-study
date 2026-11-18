@@ -1,52 +1,63 @@
 \section{Introduction}\label{sec:intro}
 
-% 1. CONTEXT: why the topic matters
-Teaching is an occupation with a high emotional load: teachers work with many
-people at once, over long periods, and under constant responsibility for the
-results of others. Such conditions are a classic source of professional
-burnout, a state that Maslach and colleagues describe through three
-dimensions: emotional exhaustion, depersonalization and reduced personal
-accomplishment~\cite{maslach1981mbi,maslach2001job}. A systematic review and
-meta-analysis of 45 articles on secondary school teachers concluded that this
-group is at high risk of burnout~\cite{garciacarmona2019burnout}.
+Teaching is generally regarded as an emotionally demanding occupation, because
+teachers work with many people at once and are responsible for their results.
+Such conditions are associated with professional burnout, a state that Maslach
+and colleagues describe through three dimensions: emotional exhaustion,
+depersonalization and reduced personal accomplishment~\cite{maslach1981mbi,maslach2001job}.
+A systematic review and meta-analysis of 45 articles on secondary school
+teachers concluded that this group is at high risk of burnout~\cite{garciacarmona2019burnout}.
 
-% 2. GAP: what is missing
-The risk, however, is not the same in every school. The job
+The risk is not necessarily the same in every school. The job
 demands--resources model explains burnout by the balance between job demands
-and the resources available to cope with them~\cite{demerouti2001jdr}. State
-and private schools differ in exactly these conditions, for example in pay,
-class size, administrative control and autonomy. Yet the review
-cited above also shows that the measured prevalence depends strongly on the
-instrument that is used~\cite{garciacarmona2019burnout}, which makes results of
-different studies hard to compare. We therefore plan a direct comparison of the
-two school types with one instrument and one analysis protocol.
-% TODO (check before submission): search for existing state-vs-private studies
-% and, if some exist, rewrite the gap as "few studies / none for our context".
+and the resources available to cope with them~\cite{demerouti2001jdr,bakker2007jdr};
+it is flexible and can be applied to a wide range of occupations~\cite{bakker2007jdr}.
+State and private schools may differ in exactly these conditions, for example
+in pay, class size, administrative control and autonomy.
 
-% 3. APPROACH: what we do
-In this paper we describe a planned cross-sectional study of burnout among
-teachers in state and private schools. Burnout is measured with the Maslach
-Burnout Inventory in its Russian-language adaptation by Vodopyanova and
-Starchenkova~\cite{vodopyanova2008burnout}. The groups are compared with
-Welch's $t$-test~\cite{welch1947t} and the Mann--Whitney test~\cite{mann1947u},
-and uncertainty is reported with bootstrap confidence
-intervals~\cite{efron1979bootstrap}. The whole analysis is implemented as a
-reproducible, containerised pipeline.
+Comparisons of the two school types exist, but they do not give a clear
+picture. In a study of special-school teachers (120 per school type), burnout was
+higher in government schools than in private schools~\cite{doss2018special},
+whereas in a study of 180 teachers with the MBI, teachers of English in Iranian
+private language institutes reported worse burnout than their colleagues in
+public schools~\cite{bahrami2019efl}. These
+studies concern specific groups, they point in different directions, and the
+review cited above shows that the measured prevalence depends on the
+instrument~\cite{garciacarmona2019burnout}, which makes studies hard to
+compare. We therefore plan a direct comparison of teachers in state and
+private schools with one instrument and one analysis protocol.
+% TODO (check before submission): search once more for studies of general-education teachers in our region.
 
-% 4. CONTRIBUTIONS
+We describe a planned cross-sectional study. Burnout is measured with the
+Maslach Burnout Inventory in its Russian-language adaptation~\cite{vodopyanova2008burnout},
+and the groups are compared with Welch's $t$-test, the Mann--Whitney test and
+bootstrap confidence intervals. The study addresses three research questions:
+RQ1, do burnout levels of the two groups differ (main comparison: emotional
+exhaustion); RQ2, do the groups differ on each of the three scales; and RQ3,
+which working conditions are associated with burnout (exploratory). The
+analysis runs in a containerised pipeline, which supports reproducibility~\cite{boettiger2015docker}.
+
+Questionnaire data may arrive in several waves, and every wave requires the
+scores and tests to be recomputed. If the analysis is slow or cannot be repeated
+exactly, errors and undocumented manual steps creep in. We therefore treat the
+pipeline as a part of the study and check how its latency and throughput change
+when the number of respondents grows.
+
 The contributions of this work are:
 \begin{itemize}
   \item a research design and analysis protocol for comparing teacher burnout
         in state and private schools, fixed before data collection;
-  \item three research questions with testable hypotheses: RQ1 compares burnout
-        levels of the two groups, RQ2 compares the three burnout scales
-        separately, and RQ3 explores which working conditions are associated
-        with burnout;
+  \item three research questions with testable hypotheses (RQ1--RQ3);
   \item an open, reproducible software pipeline for scoring the questionnaire
-        and computing statistics, validated for correctness and speed.
+        and computing the statistics;
+  \item a measurement of the pipeline's latency and throughput that reports
+        tail percentiles~\cite{dean2013tail} with bootstrap confidence intervals.
 \end{itemize}
 
-% 5. ROADMAP
-The rest of the paper is organised as follows.
-\autoref{sec:method} describes the participants, the instrument, the
-statistical methods and the validation of the pipeline.
+The rest of the paper is organised as follows. \autoref{sec:method} describes
+the design (\autoref{sec:design}), the instrument (\autoref{sec:instrument}), the
+statistical methods (\autoref{sec:tests}), the pipeline (\autoref{sec:pipeline}) and
+the measurement procedure (\autoref{sec:measure}). \autoref{sec:results} gives the
+setup (\autoref{sec:setup}), the results (\autoref{sec:res}) and the discussion
+(\autoref{sec:disc}), and \autoref{sec:concl} states the limitations
+(\autoref{sec:limits}), concludes and outlines future work (\autoref{sec:future}).

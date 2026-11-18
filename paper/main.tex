@@ -30,6 +30,10 @@
 \usepackage{graphicx}
 \graphicspath{{figures/}}
 
+% ---------- architecture diagram (vector) ----------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+
 % ---------- cross-references (load hyperref LAST) ----------
 \usepackage[hidelinks]{hyperref}
 % Names printed by \autoref
@@ -53,15 +57,16 @@ in State and Private Schools}
 \maketitle
 
 \begin{abstract}
-% Planned-study abstract; after data collection, replace the last sentence by the main results.
-Professional burnout is a widespread risk for teachers, but it may depend on the working conditions of the school.
-We describe a planned cross-sectional study that compares burnout of teachers in state and private schools
-using the Maslach Burnout Inventory (30--40 teachers, 15--20 per group).
-The groups are compared with Welch's $t$-test and the Mann--Whitney test, effect sizes are reported as Cohen's $d$,
-and uncertainty is shown with bootstrap confidence intervals.
-The analysis runs in a reproducible containerised pipeline, which processed 120 test runs without errors
-with a median latency of 44--47\,ms for 35 to 1000 respondents.
-The study protocol is fixed before data collection to keep the analysis transparent.
+Professional burnout is a recognised risk for teachers, and it may depend on the working conditions of the school.
+Earlier comparisons of teachers in state and private institutions concern specific groups and report different directions of the difference.
+This paper presents the protocol of a planned cross-sectional study that compares burnout of teachers in state and private schools
+with the Maslach Burnout Inventory (30--40 teachers recruited from several schools of one city), together with a reproducible, containerised analysis pipeline.
+The groups will be compared with Welch's $t$-test, the Mann--Whitney test and Cohen's $d$, with bootstrap confidence intervals, and the reliability of the scales will be checked with Cronbach's $\alpha$.
+To show that the analysis can be repeated after every data update, we measured the pipeline on synthetic respondents:
+in 120 measured runs without errors, the median latency stayed between 43.8 and 46.8\,ms for 35 to 1000 respondents,
+while the throughput grew from 797 to 21\,371 respondents per second.
+These results suggest that the analysis will not be a bottleneck.
+The survey itself has not been conducted yet, so the research questions are left for future work, and the limitations of the design are stated explicitly.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -70,8 +75,8 @@ teacher burnout, Maslach Burnout Inventory, state and private schools, working c
 
 \input{sections/01_introduction}
 \input{sections/02_methodology}
-% \input{sections/03_results}      % added in the next studios
-% \input{sections/04_discussion}
+\input{sections/03_results}
+\input{sections/04_conclusion}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

@@ -1,0 +1,34 @@
+\section{Limitations and Conclusion}\label{sec:concl}
+
+\subsection{Limitations and Threats to Validity}\label{sec:limits}
+\textit{Internal validity.} Forty runs per workload give precise medians but
+imprecise tail percentiles. Interleaving, warm-up and keeping outliers limit,
+but do not remove, the influence of background activity. The planned groups of
+15--20 teachers are small: a power of 0.80 is reached only for large differences
+($d \gtrsim 0.9$--1.1, \autoref{tab:power}), so smaller ones may be missed.
+\textit{External validity.} All measurements come from one machine and one
+container, so absolute times describe this environment, and the respondents are
+synthetic. The teachers are recruited by convenience sampling from several
+schools of one city, so the results may not generalise to other cities or to
+all schools, and those who agree to take part may differ from those who decline.
+\textit{Construct validity.} Latency and throughput are proxies for how practical
+the pipeline is. The MBI is a self-report questionnaire, and the index $B$
+(\autoref{eq:index}) is relative to the sample, so it compares the two groups
+but is not an absolute level of burnout.
+
+\subsection{Conclusion and Future Work}\label{sec:future}
+We presented the protocol of a planned comparison of teacher burnout in state
+and private schools and a reproducible analysis pipeline; the four contributions
+of \autoref{sec:intro} are delivered except for the survey results. The survey has
+not been conducted, so RQ1--RQ3 remain open and no claim about teacher burnout is
+made. For RQ1, the main outcome will be the difference in emotional exhaustion with
+Cohen's $d$ and its bootstrap interval; for RQ2, the same outcome for each scale;
+and for RQ3, the correlations and the regression of \autoref{tab:plan}.
+The measurements, however, suggest that the pipeline is fast enough for repeated
+use: in 120 runs without errors, the median latency stayed between 43.8 and
+46.8\,ms for 35 to 1000 respondents.
+
+Future work has three directions: (i) to collect the data and report the results
+for RQ1--RQ3; (ii) to repeat the measurements on other machines with more runs,
+so that tail percentiles become reliable; and (iii) to include more schools and
+regions to test whether the findings generalise.

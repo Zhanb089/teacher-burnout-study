@@ -57,7 +57,7 @@ teacher-burnout-study/
 │   ├── figures/             # fig1_latency_vs_load, fig2_distribution_boxplot (.pdf + .png 300 DPI), captions.md
 │   ├── paper_section_4.md   # paper section 4 (results and discussion), IEEE style, LaTeX inside Markdown
 │   └── latex/               # LaTeX sources of the formulas, results table and multi-panel figure (studio ss9)
-├── paper/                  # IEEE paper in LaTeX (studio ss10): main.tex, sections/, references.bib, figures/
+├── paper/                  # IEEE paper in LaTeX (studios ss10 and ss11, Task 4): main.tex, sections/, references.bib, figures/
 ├── src/
 │   ├── benchmark.py         # scoring, guardrails, RQ1-RQ3 analysis + measurement harness (--bench)
 │   ├── process_data.py      # cleaning, warm-up filter, error-rate guardrail, statistics, bootstrap CI
